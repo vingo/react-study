@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "mcp__tavily__tavily_search",
+      "Bash(curl -s --max-time 15 https://nodejs.org/dist/index.json)",
+      "Bash(python3 -c 'import json,sys; d=json.load\\(sys.stdin\\); seen=set\\(\\) *)",
+      "Bash(npm view *)",
+      "Bash(cat)",
+      "Bash(python3 -)",
+      "Bash(claude --version)",
+      "Bash(claude -p --bg --name w1d1-concept-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob,WebSearch,WebFetch' '你是 React 19.3 讲义审校智能体。审校 notes/W1D1-render-model.md：只以 react.dev 官方文档核查技术事实。不要修改任何现有文件。将中文审校报告写入 .parallel-runs/w1d1-concept-audit.md，包含：准确项、需更正项（若无则明确写无）、容易误解的表述、对应官方 URL。完成后简短回复报告路径。')",
+      "Bash(claude -p --bg --name w1d1-exercise-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob,Bash\\(export PATH=/Users/maochaobo/.nvm/versions/node/v24.22.2/bin:$PATH; cd exercises && npx vitest run W1D1\\),Bash\\(export PATH=/Users/maochaobo/.nvm/versions/node/v24.22.2/bin:$PATH; cd exercises && npx tsc --noEmit\\)' '你是 React 练习验收智能体。审阅 exercises/W1D1（不要读取或更改 solutions），确认 README 的学习目标、起始失败测试和 TypeScript 类型检查是否合理。允许运行指定的测试和类型检查。绝不修改 exercises/W1D1 或配置。把中文报告写入 .parallel-runs/w1d1-exercise-audit.md：测试结果、每题验证的概念、发现的问题和改进建议。完成后简短回复报告路径。')",
+      "Bash(claude -p --bg --name w1d1-quiz-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob' '你是 React 心智模型测验设计智能体。审校 notes/W1D1-quiz.md 及 notes/.answers/W1D1.md，不要修改既有文件。重点检查题目是否测理解而非 API 记忆、答案是否完整、评分是否和 80% 标准一致、题目是否泄露答案。将中文报告写到 .parallel-runs/w1d1-quiz-audit.md，列出每题考查点、评估结论和最多三条可选改进。完成后简短回复报告路径。')",
+      "Bash(claude agents *)",
+      "Bash(claude --bg --name w1d1-concept-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob,WebSearch,WebFetch' '你是 React 19.3 讲义审校智能体。审校 notes/W1D1-render-model.md：只以 react.dev 官方文档核查技术事实。不要修改任何现有文件。将中文审校报告写入 .parallel-runs/w1d1-concept-audit.md，包含：准确项、需更正项（若无则明确写无）、容易误解的表述、对应官方 URL。完成后简短回复报告路径。')",
+      "Bash(claude --bg --name w1d1-exercise-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob,Bash\\(export PATH=/Users/maochaobo/.nvm/versions/node/v24.22.2/bin:$PATH; cd exercises && npx vitest run W1D1\\),Bash\\(export PATH=/Users/maochaobo/.nvm/versions/node/v24.22.2/bin:$PATH; cd exercises && npx tsc --noEmit\\)' '你是 React 练习验收智能体。审阅 exercises/W1D1（不要读取或更改 solutions），确认 README 的学习目标、起始失败测试和 TypeScript 类型检查是否合理。允许运行指定的测试和类型检查。绝不修改 exercises/W1D1 或配置。把中文报告写入 .parallel-runs/w1d1-exercise-audit.md：测试结果、每题验证的概念、发现的问题和改进建议。完成后简短回复报告路径。')",
+      "Bash(claude --bg --name w1d1-quiz-audit --permission-mode acceptEdits --allowedTools 'Read,Write,Glob' '你是 React 心智模型测验设计智能体。审校 notes/W1D1-quiz.md 及 notes/.answers/W1D1.md，不要修改既有文件。重点检查题目是否测理解而非 API 记忆、答案是否完整、评分是否和 80% 标准一致、题目是否泄露答案。将中文报告写到 .parallel-runs/w1d1-quiz-audit.md，列出每题考查点、评估结论和最多三条可选改进。完成后简短回复报告路径。')",
+      "Bash(claude attach *)",
+      "Bash(sed -n '1,160p')",
+      "Bash(claude logs *)",
+      "Bash(sed -n '1,120p')",
+      "Bash(claude stop *)"
+    ]
+  }
+}
