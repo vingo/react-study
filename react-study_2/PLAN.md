@@ -48,7 +48,7 @@
 ### 第 2 周：异步、数据与路由
 | ID | 主题 | 要点 |
 |---|---|---|
-| W2D1 | Actions 与表单 | form action、useActionState、useFormStatus、useOptimistic |
+| W2D1 | Actions 与表单（**重点**） | form action、useActionState、useFormStatus、useOptimistic |
 | W2D2 | Suspense 与 use() | 异步读取、Error Boundary、请求竞态、加载状态设计 |
 | W2D3 | TanStack Query 5 | 查询键、staleTime/gcTime、mutation、失效与乐观更新 |
 | W2D4 | React Router 8 | 嵌套路由与布局、loader/action、URL 作为状态 |

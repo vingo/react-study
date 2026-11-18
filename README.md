@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-当前处于 **v1 规划阶段**，本目录暂时只有项目说明，尚未初始化 Vite、安装依赖或编写应用代码。
+**v1 已完成**，应用位于 [`apps/kanban`](apps/kanban)。技术栈为 Vite 8 + React 19 + TypeScript 7，使用 `useState` / `useEffect` / `useRef` 管理任务与持久化；Vitest + Testing Library 覆盖新建、编辑、移动、删除、恢复与损坏数据等核心路径。
 
 ## 学习目标
 
@@ -85,13 +85,13 @@ App
 
 ## 验收标准（v1）
 
-- [ ] 用户可创建、编辑、删除任务，并切换任务状态。
-- [ ] 删除不会误删其他任务，且需要显式确认。
-- [ ] 每个任务使用稳定的 `task.id` 作为 `key`。
-- [ ] 刷新页面后任务仍存在；损坏的 `localStorage` 数据不会使页面崩溃。
-- [ ] 新建任务标题为空时无法提交，并显示可理解的提示。
-- [ ] 核心流程至少覆盖：新建、编辑、移动、删除、持久化恢复。
-- [ ] `npm run build`、类型检查和测试全部通过。
+- [x] 用户可创建、编辑、删除任务，并切换任务状态。
+- [x] 删除不会误删其他任务，且需要显式确认。
+- [x] 每个任务使用稳定的 `task.id` 作为 `key`。
+- [x] 刷新页面后任务仍存在；损坏的 `localStorage` 数据不会使页面崩溃。
+- [x] 新建任务标题为空时无法提交，并显示可理解的提示。
+- [x] 核心流程至少覆盖：新建、编辑、移动、删除、持久化恢复。
+- [x] `npm run build`、类型检查和测试全部通过。
 
 ## 后续版本
 
@@ -104,13 +104,14 @@ App
 
 ## 开发命令
 
-应用初始化后，在本目录运行：
+应用位于 `apps/kanban`：
 
 ```bash
+cd apps/kanban
 npm install
 npm run dev
 npm run test
 npm run build
 ```
 
-具体脚本以初始化后的 `package.json` 为准。
+`npm run build` 会先执行 `tsc --noEmit` 类型检查，再执行 Vite 生产构建。应用结构与设计要点见 [`apps/kanban/README.md`](apps/kanban/README.md)。
