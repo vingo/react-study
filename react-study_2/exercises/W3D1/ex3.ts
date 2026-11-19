@@ -100,9 +100,33 @@ function applyEffects(
 ): void {
   // TODO 1：设置 alternate、记录 placement/update，并递归 children。
   // 然后再按旧 children 顺序记录没有匹配上的 deletion。
-  void wip
-  void current
-  void effects
+  if (current) {
+    wip.alternate = current
+     if (!shallowEqualProps(wip.props, current.props)) {
+      effects.push({ tag: 'update', type: wip.type, key: wip.key })
+    }
+  } else {
+    wip.alternate = null
+    effects.push({ tag: 'placement', type: wip.type, key: wip.key })
+  }
+  const oldChildren = current ? current.children : []
+  const oldByKey = new Map(oldChildren.map((child) => [child.key, child]))
+  const matchedKeys = new Set<string>()
+  for (const child of wip.children) {
+    const oldChild = oldByKey.get(child.key)
+
+    if (oldChild && oldChild.type === child.type) {
+      matchedKeys.add(child.key)
+      applyEffects(child, oldChild, effects)
+    } else {
+      applyEffects(child, null, effects)
+    }
+  }
+  for (const oldChild of oldChildren) {
+    if (!matchedKeys.has(oldChild.key)) {
+      effects.push({ tag: 'deletion', type: oldChild.type, key: oldChild.key })
+    }
+  }
 }
 
 export function render(root: Root, next: VNode): RenderResult {
@@ -110,14 +134,18 @@ export function render(root: Root, next: VNode): RenderResult {
   const effects: RenderEffect[] = []
 
   // TODO 2：处理根节点的 type/key 失配，并调用 applyEffects。
-  void root
-  void shallowEqualProps
+   let current = root.current
+
+  if (current && (current.type !== wip.type || current.key !== wip.key)) {
+    effects.push({ tag: 'deletion', type: current.type, key: current.key })
+    current = null
+  }
+  applyEffects(wip, current, effects)
 
   return { wip, effects }
 }
 
 export function commit(root: Root, result: RenderResult): void {
   // TODO 3：切换 current 指针。
-  void root
-  void result
+  root.current = result.wip
 }

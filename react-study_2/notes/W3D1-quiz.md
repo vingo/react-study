@@ -18,7 +18,8 @@ function handleClick() {
 ```
 
 **你的答案：**
-
+显示2，
+顺序： n用快照的值0 ，值1  -》 接收上一步的pending 1  值2 -〉直接使用快照的值 0 值1 -》 pending 1 值 2
 
 ## 复习 2：render、事件处理函数与 Effect 的职责边界（1 分）
 
@@ -31,6 +32,15 @@ function handleClick() {
 分别应该写在哪里（事件处理函数 / `useEffect` / 直接在 render 中计算）？并说明：把第 1 项放进 Effect 会有什么问题；把第 3 项用 `useState` + `useEffect` 同步会有什么问题。
 
 **你的答案：**
+
+1:事件函数 处理post
+2:使用 useEffect 依赖roomid。setup建立连接，cleanup关闭连接。roomid变化时，先执行旧cleanup，然后 新setup；卸载时执行新cleanup；
+3: fullname在render内计算，无需state做额外存储；
+3.1: effect在渲染提交后执行，同时会在挂载，依赖变化时多次执行；
+3.2: 虽然可以达到计算fullname效果，effect单首次渲染 fullname为空值，多一次渲染，用户可能会看到闪现的不一致，
+同时保存了2份数据（firstName/lastName，fullName），需要手动保持头部
+
+
 
 
 ## 第 1 题：Fiber 树与双缓冲（2 分）
@@ -58,6 +68,13 @@ function App() {
 4. commit 完成后 `root.current` 指向哪棵树？下一轮更新时，这两棵树如何被复用？
 
 **你的答案：**
+1: fiber返回三个信息：child，sibling，return；要遍历所有子节点，从 `child` 开始沿 `sibling` 链前进即可。
+2: 顺序： main-》header-〉ul-> li(a)->li(b)->footer,
+   执行的过程：有子节点就继续下探；没有子节点就完成当前节点并找兄弟节点了没有兄弟节点就沿着父节点会退，直到找到兄弟节点会在跟节点；
+3: current 树是页面显示的信息，root.current 就指向它。 work-in-progress fiber 通过`alternate` 指向 `current`树中对应的filber。
+render阶段只是在调用组件，计算新的jsx，做diff，构建work-in-progress树，不会修改真实的 DOM，这个阶段即使失败/暂停/重新开始都不影响页面显示。
+commit完成后会得到完成的work-in-pregress树， `root.current` 会指向它； 
+下一轮更新时： 旧的`current` 不会销毁，而是称为新`current` 的`alternate`,下一轮更新后，react会以新的`current`来显示UI，2颗树会交替展示在用户的UI上，这就是 双缓冲。
 
 
 ## 第 2 题：render 阶段与 commit 阶段的时序（2 分）
@@ -94,6 +111,15 @@ function App() {
 4. 用一句话说明：哪些工作属于 render 阶段，哪些工作属于 commit 阶段？
 
 **你的答案：**
+1: render 0 null
+layout 0 0
+passive 0 0， 执行顺序： render -》 layout-〉 effect
+2: 点击后输出：render 1 0
+  layout 1 1
+  passive 1 1；
+3: render内必须是单纯的计算：不能修改已经渲染出的对象或者DOM，这样会影响render多次执行，绕过了react对DOM操作的控制权，破坏了并发渲染的可预测性；
+4: render阶段： 调用组件，计算jsx，做diff，构建work-in-progress；不修改DOM，可以被中断，暂停，丢弃，重做；
+commit 阶段： 把已经计算好的变更同步应用到DOM，切换root.current.
 
 
 ## 第 3 题：同层 diff、index key 与 key 变化（3 分）
@@ -139,3 +165,13 @@ function List({ items }: { items: Item[] }) {
 4. React 在同一个父节点下比较新旧子节点时，判断「能否复用旧 Fiber」要看哪两个东西？分别说明：key 相同但元素类型从 `Row` 变成 `section`；类型相同但 key 变了。key 需要全局唯一吗？
 
 **你的答案：**
+1: hello,,,; 输出： mount：C;
+2: 删除a后，输出是：unmount:c,其中 hello显示在b行；c行的state被销毁
+3: 更新``key={`${item.id}`}``后，abc保持不变，输出： mount：X。
+更新```key={`${item.id}-${index}`}``后，因为key全部和旧的对不上，abc全部卸载，然后重新挂载xabc
+4: key 是否一样， 元素类型是否一样
+`key相同，类型变为section`： 不能复用，旧的row被卸载，dom被删除；新的section重新挂载
+`key不同，类型一样`：不能复用，旧的卸载，state和DOm 重新创建
+key只要在兄弟节点子建唯一，不需要全局唯一
+
+

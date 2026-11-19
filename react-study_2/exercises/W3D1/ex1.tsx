@@ -112,7 +112,7 @@ export function TaskQueue() {
           // 局部 state（展开、草稿）留在旧行号上。
           // TODO：改成任务自己的稳定 id。
           <QueueItem
-            key={index}
+            key={task.id}
             task={task}
             onMoveToTop={moveToTop}
             onRemove={remove}

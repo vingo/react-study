@@ -86,12 +86,72 @@ export function reconcileChildren(
   oldChildren: VNode[],
   newChildren: VNode[],
 ): ReconcileResult {
-  // TODO：按文件开头的规则实现同层 diff。
-  // 当前空实现会让所有测试停留在“什么都没匹配上”的断言失败上。
-  return {
+  const result: ReconcileResult = {
     mounts: [],
     updates: [],
     unmounts: [],
     moves: [],
   }
+  // TODO：按文件开头的规则实现同层 diff。
+  // 当前空实现会让所有测试停留在“什么都没匹配上”的断言失败上。
+
+  const oldIndexByKey = new Map<string, number>()
+  oldChildren.forEach((child, index) => {
+    if (!oldIndexByKey.has(child.key)) {
+      oldIndexByKey.set(child.key, index)
+    }
+  })
+
+  const matchedKeys = new Set<string>()
+  const matched: Array<{ node: VNode; index: number; oldIndex: number }> = []
+
+  newChildren.forEach((node, index) => {
+    const oldIndex = oldIndexByKey.get(node.key)
+    const oldNode = oldIndex === undefined ? undefined : oldChildren[oldIndex]
+
+    if (oldIndex !== undefined && oldNode && oldNode.type === node.type) {
+      matchedKeys.add(node.key)
+      matched.push({ node, index, oldIndex })
+
+      if (!shallowEqualProps(oldNode.props, node.props)) {
+        result.updates.push({
+          type: 'update',
+          key: node.key,
+          index,
+          node,
+          prev: oldNode,
+        })
+      }
+    } else {
+      result.mounts.push({ type: 'mount', key: node.key, index, node })
+    }
+  })
+
+  // move：当前匹配节点前面存在旧下标更大的匹配节点，说明相对顺序被打乱。
+  // 这些节点在 commit 阶段需要重新插入。保持相对顺序的节点（例如只发生了
+  // 删除后的补位）不会被标记。
+  for (let index = 0; index < matched.length; index += 1) {
+    const current = matched[index]
+    const hasEarlierSiblingFromLaterPosition = matched
+      .slice(0, index)
+      .some((previous) => previous.oldIndex > current.oldIndex)
+
+    if (hasEarlierSiblingFromLaterPosition) {
+      result.moves.push({
+        type: 'move',
+        key: current.node.key,
+        from: current.oldIndex,
+        to: current.index,
+        node: current.node,
+      })
+    }
+  }
+
+  oldChildren.forEach((child) => {
+    if (!matchedKeys.has(child.key)) {
+      result.unmounts.push({ type: 'unmount', key: child.key })
+    }
+  })
+
+  return result
 }

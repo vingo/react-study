@@ -1,5 +1,7 @@
 # W3D1：Fiber 与协调
 
+> **备注：重点**
+>
 > 以 React 19.3 为准（npm 最新 19.3.1）。承接 [W1D1 渲染模型](W1D1-render-model.md) 的“render 纯、commit 写 DOM”和 [W1D5 组合与 Context](W1D5-composition-context.md) 的 key 重置。文中 Fiber 字段名参考 React 19.3 的 `react-reconciler@0.34.0` 开发构建，属于内部实现，可能随版本变化；标“面试口径”的地方只要求讲清机制，不要求背源码行号。代码为节省篇幅省略了 `react` 的 import。
 
 ## 1. 一句话结论
