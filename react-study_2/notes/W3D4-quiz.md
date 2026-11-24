@@ -27,6 +27,8 @@ function Stopwatch() {
 2. 修复组件，使秒数正常递增。若要把这段行为写成不等待 3 秒的确定性测试，计时器的推进和断言应怎么写？在 StrictMode 下还要注意什么？
 
 **你的答案：**
+1: 收到的值1 ， setSeconds（seconds + 1） 的方式是值设置，pending state的值还是0， 
+2: 修复代码setSeconds（() => seconds + 1)
 
 
 ## 复习 2：不可变更新与 StrictMode 双调用（0.5 分｜来自 W1D1 第 2 题）
@@ -64,6 +66,15 @@ function TaskBoard() {
 3. 给出修复后的 `addTask` 或事件处理（要求不可变更新），并说明随机 `id` 应该在哪里生成。
 
 **你的答案：**
+1:  有0 个 li标签
+2: 1个， 文本是1，
+3: const addTask = (title, tasks）=> {
+    if(!title) return 
+    const task = { id: crypto.randomUUID(), title, done: false }
+    setTasks([...tasks,task])
+}
+` <button onClick={() => setTasks(prev => addTask('写周报',tasks))}>添加</button>`
+
 
 
 ## 第 1 题：查询优先级、可访问名称与用户事件（3 分）
@@ -135,7 +146,7 @@ screen.getByLabelText('标题')
 最后说明：表单输入框应优先用哪类查询？`getByRole` 的 `name`、`getByLabelText`、`getByPlaceholderText`、`getByText`、`getByTestId` 的推荐优先级是什么？
 
 **你的答案：**
-
+1: 
 
 ### B. 事件与输入约束（1 分）
 

@@ -5,7 +5,7 @@
 |---|---|---|---|
 | v1 任务看板 | 已完成 | 2026-11-16 | `apps/kanban`：Vite 8 + React 19 + TypeScript 7；useState / useEffect / useRef；localStorage 持久化与损坏数据降级；Vitest + Testing Library 18 个测试通过 |
 
-下一步：完成 W2D1–W2D5（Actions、Suspense、TanStack Query、React Router、状态管理选型），第 2 周末开始 v2（MSW + TanStack Query + React Router + Zustand）。
+下一步：完成 W3D5 手写 mini-react（材料已就绪，**重点中的重点**）；W2D1/W2D3/W2D5 与 W3D2/W3D3 的测验/练习待补；W3D4 已跳过。之后进入 v2（MSW + TanStack Query + React Router + Zustand）。
 
 ## 进行中
 - **W2D1 Actions 与表单（重点）**：讲义、练习、测验已生成；练习待验收，测验待作答。
@@ -13,10 +13,12 @@
 - **W2D3 TanStack Query 5**（2026-11-17）：讲义、练习、测验已生成；练习起始 5 失败 / 4 通过，参考答案 9/9 通过，类型检查通过。待完成测验与练习验收。
 - **W2D5 状态管理选型（Zustand 5）**（2026-11-18）：讲义、练习、测验已生成；练习起始 8 失败 / 4 通过，参考答案 12/12 通过，类型检查通过。待完成测验与练习验收。
 - **W3D1 Fiber 与协调（重点）**（2026-11-18）：讲义、练习、测验已生成；练习起始 15/15 失败，参考答案 15/15 通过。2026-11-19 判卷 7.5/9（基本掌握）；练习验收 15/15 通过，类型检查通过；ex2 的 move 判断与 ex3 的双缓冲符合约定。需补：Fiber 三指针为何不用数组、render 读旧 DOM 的解释、index key 错位机制。
-- **W3D2 并发渲染**（2026-11-18）：讲义、练习、测验已生成；练习起始 5 失败 / 1 通过，参考答案 6/6 通过，类型检查通过。待完成测验与练习验收。
-- **W3D3 性能与 React Compiler**（2026-11-18）：讲义、练习、测验已生成；练习起始 9 失败 / 8 通过，参考答案 17/17 通过，类型检查通过。待完成测验与练习验收。
-- **W3D4 测试**（2026-11-18）：讲义、练习、测验已生成；练习起始 9/9 失败，参考答案 9/9 通过，类型检查通过。MSW 3 讲解完整，练习用等价 fetch mock。待完成测验与练习验收。
-- **W3D5 手写 mini-react**（2026-11-18）：讲义、练习、测验已生成；练习起始 18 失败 / 1 通过，参考答案 19/19 通过，类型检查通过。实现位于 `exercises/W3D5/mini-react/`。待完成测验与练习验收。
+- **W3D2 并发渲染**（2026-11-18）：讲义、练习、测验已生成；练习起始 5 失败 / 1 通过，参考答案 6/6 通过。2026-11-20 练习验收：6/6 通过，类型检查通过，无 act 警告；ex2 的嵌套 `startTransition`、ex3 的 `<Activity>` 用法正确。ex1 有一处语义瑕疵：`data-list-query` 应使用 `deferredQuery`，当前用了 `query`（测试未覆盖过渡期间的 DOM）。2026-11-20 判卷 5.5/9（需要复习，第 1 题薄弱）。
+- **W3D3 性能与 React Compiler**（2026-11-18）：讲义、练习、测验已生成；练习起始 9 失败 / 8 通过，参考答案 17/17 通过，类型检查通过。2026-11-20 判卷 4.35/9（需要重练：第 1 题缺 Profiler 判断与结构优化，第 3 题大半未答）；练习待验收。
+- **W3D5 手写 mini-react（重点中的重点）**（2026-11-18）：讲义、练习、测验已生成；练习起始 18 失败 / 1 通过，参考答案 19/19 通过。2026-11-24 练习验收：19/19 通过，类型检查通过，无 act 警告；keyed diff、hook 链表与 dispatch 实现正确。待清理：ex2/ex3 未使用的 React / @testing-library 导入（违反“源码不 import React”验收项）、ex3 死代码 `reconcileChildren222`；ex1 的 `props.children` 为 `0`/`''` 时会丢失子节点。2026-11-24 判卷（未完成）：已答部分约 0.8/9；第 1 题 B、第 2 题、第 3 题空白，暂不作为最终成绩；完成后再判。
+
+## 已跳过
+- **W3D4 测试**（2026-11-23 决定跳过）：测试相关主题，不作为本轮学习重点。已生成的讲义、练习、测验保留供查阅：`notes/W3D4-testing.md`、`exercises/W3D4/`、`notes/W3D4-quiz.md`。
 
 ## 主题得分
 | 主题 | 测验得分 | 掌握度 | 日期 |
@@ -29,6 +31,8 @@
 | W2D2 Suspense 与 use() | 3.95 / 9（44%） | 需要重练（代码通过） | 2026-11-17 |
 | W2D4 React Router 8 | 7.05 / 9（78%） | 基本掌握（代码 15/15） | 2026-11-18 |
 | W3D1 Fiber 与协调 | 7.5 / 9（83%） | 基本掌握（代码 15/15） | 2026-11-19 |
+| W3D2 并发渲染 | 5.5 / 9（61%） | 需要复习（第 1 题薄弱；代码 6/6） | 2026-11-20 |
+| W3D3 性能与 Compiler | 4.35 / 9（48%） | 需要重练（第 3 题未答完） | 2026-11-20 |
 
 ## 薄弱点
 - render 与 commit 的时序：首次 render 时 DOM 尚不存在；更新 render 读取到的是上一次 commit 的 DOM。
@@ -62,6 +66,27 @@
 - index key 错位：能算出插入/删除后的输入框值，但没点明 state 留在“位置”上；删除 A 时 A 的 state 被 B 复用，而不是被销毁。
 - key 身份语义：稳定 `key={item.id}` 保留 state 和 DOM（含焦点）；``key={`${id}-${index}`}`` 会让所有 key 失配、整层卸载重建。
 - Effect cleanup 措辞：卸载时执行的是最后一次 setup 的 cleanup，不是“新 cleanup”。
+- `useDeferredValue` 的观察值：`data-list-query` 应反映列表实际使用的 `deferredQuery`，而不是最新 `query`；否则过渡期间 DOM 元数据与列表内容不一致。
+- transition 与受控输入：受控 input 的 `value` 更新不能放进 transition，否则输入不能可靠显示；`startTransition` 回调同步执行，慢计算不会被自动挪到后台。
+- `isPending` 时序：从调用 `startTransition` 到 transition 提交期间为 `true`；新输入会中断并重启后台渲染，但不会让它提前变 `false`，输入框也不会被阻塞。
+- `await` 之后的更新：transition 作用域丢失，`setResults` 变成普通紧急更新；要再包一层 `startTransition`，并用请求 id/AbortController 处理乱序。
+- Suspense 与 key：不加 key 时 transition 保留已显示的旧内容；`key={query}` 让边界成为新身份，新边界挂起会显示 fallback。
+- Activity 与条件渲染：Activity 隐藏只清理 Effects，保留 state 和 DOM；`{cond && <Home />}` 会卸载组件，state/DOM 全部销毁。
+- Activity 的 DOM 副作用：`<video>` 等 DOM 自身状态不会因 Effect cleanup 自动停止，需在返回的 cleanup 中 `pause()`；清理逻辑写在 setup 里会导致隐藏时泄漏、显示时重复订阅。
+- Profiler 读数：`actualDuration ≈ baseDuration` 说明 memo 没让 `Chart` 跳过渲染；这些数字不含 commit/paint/Effect/Profiler 外子树，`baseDuration` 只是估算。
+- memo 失效与结构优化：`options`/`onSelect` 每次新建引用会让 `memo` 失效；状态下沉 + `children` 组合比逐个稳定 props 更彻底。
+- `memo` 的价值条件：频繁因父组件重渲染、props 浅比较相同、渲染确实昂贵；C1 算术与 C2 宿主事件不值得，C3 排序先测量。
+- `useMemo` 副作用：计算函数在 render 阶段执行，不能做 `analytics.track`；依赖漏 `status` 会一直返回旧筛选结果。
+- 内层箭头函数：`onPick={() => handlePick(item.id)}` 每次 render 新建，缓存外层 `handlePick` 也救不了 `memo`；直接传 `handlePick`，由 Row 调用 `onPick(item.id)`。
+- React Compiler 识别范围：只编译组件/Hook（PascalCase 或 `use` 前缀且返回 JSX/调用 Hook），普通工具函数不单独编译；memo 结果不跨组件共享。
+- Compiler 与 Rules of React：遇到 mutation 会 bailout，不会自动修正；`"use no memo"` 只是诊断/临时隔离，正确做法是消除 mutation。
+- 手动 memo 的去留：不能全删，Effect 依赖等场景仍需稳定引用；memo 是性能优化，不是正确性保证，且不替代 Profiler 测量。
+- mini-react 验收项：源码不 import React，测试只用原生 DOM；未使用的导入不影响测试结果，但违反验收标准，应删除。
+- `createElement` 的 children 判断：`props.children` 是否存在要用 `!== undefined`，不能用 truthy，否则 `0` 和空字符串会被当成“没有 children”。
+- mini-react keyed diff：匹配键是“同层 + key + type”；复用 fiber 时 alternate 指向旧 fiber，DOM 与 hook state 才能跟随 key；未匹配旧 fiber 进入 deletions，commit 按新 sibling 顺序 append 实现移动。
+- mini-react 元素形状：`type` 在元素顶层，不是 `props.type`；`props.id` 应为 `'app'`；文本要包成 `TEXT_ELEMENT`，`nodeValue` 保留数字。
+- JSX 编译：经典 runtime 调 `React.createElement`，自动 runtime 调 `jsx` / `jsxs`；组件函数出现在元素的 `type` 字段，元素对象既不是 DOM 也不是 Fiber。
+- key 重置：`<Chat key={recipient.id} />` 可让每位收件人拿到空白草稿；随机 key 每次 render 都重建，草稿、焦点、DOM 与 Effects 全部丢失。
 
 ## 复习队列
 | 题目来源 | 概念 | 下次复习日期 | 连续答对次数 |
@@ -93,3 +118,18 @@
 | W3D1 第 3 题 | index key 的 state 错位、key 身份语义 | 2026-11-20 | 0 |
 | W3D1 复习 1 | state 更新队列：直接值替换、更新函数读 pending | 2026-11-22 | 0 |
 | W3D1 复习 2 | 事件 / Effect / render 的职责边界 | 2026-11-22 | 0 |
+| W3D2 第 1 题 | transition 受控输入、isPending、await 后更新、Suspense key | 2026-11-21 | 0 |
+| W3D2 第 2 题 | useDeferredValue 旧值、memo、Suspense 与 debounce 区别 | 2026-11-23 | 0 |
+| W3D2 第 3 题 | Activity 预渲染、Effects、媒体清理、纯文本子树 | 2026-11-22 | 0 |
+| W3D2 复习 1 | render 纯度：StrictMode 双调用与生产环境的差异 | 2026-11-23 | 0 |
+| W3D2 复习 2 | key 作为组件身份、随机 key 的后果 | 2026-11-21 | 0 |
+| W3D3 第 1 题 | Profiler 读数、memo 失效、结构优化顺序 | 2026-11-21 | 0 |
+| W3D3 第 2 题 | useMemo 依赖与副作用、内层回调、memo 取舍 | 2026-11-22 | 0 |
+| W3D3 第 3 题 | React Compiler 识别范围、bailout、指令与手动 memo | 2026-11-21 | 0 |
+| W3D3 复习 1 | 位置 + 类型 + key 决定 state 保留 | 2026-11-23 | 0 |
+| W3D3 复习 2 | reducer 纯度、不可变更新、随机 ID 的位置 | 2026-11-22 | 0 |
+| W3D5 复习 1 | state 更新队列：直接值替换、更新函数读 pending | 2026-11-29 | 1 |
+| W3D5 复习 2 | key 重置草稿、随机 key 的后果 | 2026-11-25 | 0 |
+| W3D5 第 1 题 | createElement 元素形状、工作循环、双缓冲 | 2026-11-25 | 0 |
+| W3D5 第 2 题 | keyed diff、lastPlacedIndex、index key | 2026-11-25 | 0 |
+| W3D5 第 3 题 | Hook 链表顺序、更新队列、render 纯度 | 2026-11-26 | 0 |

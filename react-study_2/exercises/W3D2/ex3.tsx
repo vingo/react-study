@@ -13,7 +13,7 @@
 // "notes-panel" 和 "stats-panel"；Effects 的日志写入 activityLog。
 // 不要修改测试里的断言。
 
-import { useEffect, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 
 const activityLog: string[] = []
 
@@ -106,7 +106,10 @@ export default function KeepAliveTabs() {
       </div>
 
       {/* BUG：条件渲染会卸载另一个 tab，state 与 Effect 都随之丢失。 */}
-      {tab === 'notes' ? <NotesPanel /> : <StatsPanel />}
+      {/* {tab === 'notes' ? <NotesPanel /> : <StatsPanel />} */}
+      <Activity mode={tab === 'notes' ? 'visible' : 'hidden'} ><NotesPanel /></Activity>
+      <Activity mode={tab === 'stats' ? 'visible' : 'hidden'}><StatsPanel /></Activity>
+
     </section>
   )
 }

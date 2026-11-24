@@ -21,7 +21,7 @@
 // 可用手段（至少一种，可组合）：memo、useMemo、useCallback、状态下沉/组合。
 // 不要修改测试断言。
 
-import { Profiler, useState } from 'react'
+import { memo, Profiler, useCallback, useMemo, useState } from 'react'
 
 export type Region = '华东' | '华南' | '华北'
 
@@ -116,7 +116,7 @@ type ReportProps = {
   onSelect: (id: string) => void
 }
 
-function PerformanceReport({
+const PerformanceReport = memo(function PerformanceReport({
   rows,
   region,
   options,
@@ -124,8 +124,13 @@ function PerformanceReport({
   onSelect,
 }: ReportProps) {
   // BUG：每次 render 都重新聚合。父组件的无关状态变化会连带触发这里。
-  const summary = summarizeRegion(rows, region)
-
+  const summary = useMemo(() => {
+    return summarizeRegion(rows, region)
+  },[rows, region])
+  const visibleRows = useMemo(
+    () => rows.filter((row) => row.region === region),
+    [rows, region],
+  )
   reportRenders += 1
   renderLog.push({
     region,
@@ -133,8 +138,6 @@ function PerformanceReport({
     selectedId,
     density: options.density,
   })
-
-  const visibleRows = rows.filter((row) => row.region === region)
 
   return (
     <Profiler id="performance-report" onRender={recordReportCommit}>
@@ -164,13 +167,17 @@ function PerformanceReport({
       </section>
     </Profiler>
   )
-}
+})
 
 export default function SalesDashboard() {
   const [region, setRegion] = useState<Region>('华东')
   const [density, setDensity] = useState<Density>('compact')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [note, setNote] = useState('')
+  const options = useMemo(() => ({ density }), [density])
+  const handleSelect = useCallback((id: string) => {
+      setSelectedId(id)
+    }, [])
 
   return (
     <section aria-label="销售看板">
@@ -216,9 +223,9 @@ export default function SalesDashboard() {
       <PerformanceReport
         rows={REGION_ROWS}
         region={region}
-        options={{ density }}
+        options={options}
         selectedId={selectedId}
-        onSelect={(id) => setSelectedId(id)}
+        onSelect={handleSelect}
       />
     </section>
   )

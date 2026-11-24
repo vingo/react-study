@@ -14,7 +14,7 @@
 //   query 是输入框的最新值，listQuery 是本次列表实际使用的值；
 // - 最终 DOM 里的列表必须与当前 query 一致，不能出现两者错位的结果。
 
-import { useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 
 export type Product = { id: string; name: string }
 
@@ -56,15 +56,20 @@ function ProductList({ query }: { query: string }) {
   // BUG：列表直接使用 query 同步过滤。输入与列表在同一次 render 中完成，
   // 列表越大，输入框越卡。
   const listQuery = query
-  const products = filterProducts(listQuery)
+  const deferredQuery = useDeferredValue(query)
+  const products = useMemo(
+      () => filterProducts(deferredQuery),
+      [deferredQuery],
+    )
+  const stale = query !== deferredQuery
 
-  renderLog.push({ query, listQuery, count: products.length })
+  renderLog.push({ query, listQuery:deferredQuery, count: products.length })
 
   return (
     <section
       aria-label="商品列表"
       data-list-query={listQuery}
-      data-stale={query === listQuery ? 'false' : 'true'}
+      data-stale={stale ? 'true' : 'false'}
     >
       <p role="status">{products.length} 件商品</p>
       <ul>

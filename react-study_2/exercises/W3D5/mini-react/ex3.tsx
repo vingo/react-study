@@ -30,6 +30,8 @@
 //
 // 不要 import React；测试用原生 DOM，不会出现 act 警告。
 
+import { act } from "react"
+
 export type Key = string | number
 
 export type ComponentType<P = any> = (props: P) => MiniNode
@@ -144,10 +146,34 @@ export function useState<T>(initial: T): [T, Dispatch<T>] {
   // 4. 依次执行 hook.queue 里的更新（函数式更新读取上一步 state），然后清空 queue。
   // 5. dispatch 把更新放进 queue，并调用 scheduleRerender(fiber)。
   // 当前实现永远返回 initial，dispatch 什么也不做，所以点击不会更新 DOM。
-  void currentRenderingFiber
-  void hookIndex
-  return [initial, () => {}]
+  const fiber = currentRenderingFiber
+  if (!fiber) {
+    throw Error('useState 只能在函数组件渲染期间使用')
+  }
+  const index = hookIndex
+  hookIndex+= 1
+  let hook = fiber.hooks[index]
+  if(!hook) {
+    hook = { state: initial, queue : []}
+    fiber.hooks[index] = hook
+  }
+  // 闭包只需要一个 hook 对象；alternate 拷贝的是对象的引用，
+  // 所以旧 render 的 dispatch和新 render读到的是同一份 state / queue，
+  const currentHook: Hook = hook
+  for (const action of currentHook.queue) {
+    currentHook.state = typeof action ==='function' ? (action as (previous: unknown) => unknown)(currentHook.state): action
+  }
+  currentHook.queue = []
+
+  const dispatch: Dispatch<T> = (action) => {
+    currentHook.queue.push(action as unknown)
+    scheduleRerender(fiber)
+  }
+  return [currentHook.state as T, dispatch ]
 }
+
+
+
 
 function getRootState(container: Element): RootState {
   let root = roots.get(container)
@@ -270,7 +296,7 @@ function createFiber(
   return fiber
 }
 
-function reconcileChildren(
+function reconcileChildren222(
   parent: MiniFiber,
   children: MiniChild[],
   oldChild: MiniFiber | null,
@@ -293,17 +319,124 @@ function reconcileChildren(
   //
   // 提示：文本节点没有 key，按位置匹配；元素用 key（key 为 null 时按位置）。
   // 可用 Map<Key, MiniFiber> + Set<MiniFiber> 记录已匹配的旧节点。
+  const nextChildren = flattenChildren(children)
+  let oldFiber = oldChild
+  const oldFibers: MiniFiber[] = []
+
+  while (oldFiber) {
+    oldFibers.push(oldFiber)
+    oldFiber = oldFiber.sibling
+  }
+  const keyedOld = new Map<Key, MiniFiber>()
+
+  for (const fiber of oldFibers) {
+    if (fiber.key !== null) {
+      keyedOld.set(fiber.key, fiber)
+    }
+  }
+  const used = new Set<MiniFiber>()
+  let previous: MiniFiber | null = null
+  nextChildren.forEach((children, index) => {
+    let match: MiniFiber | null = null
+    if (typeof children === 'string' || typeof children === 'number' ) {
+      const candidate = oldFibers[index]
+      if (candidate && candidate.key === null && candidate.type === null ) {
+        match = candidate
+      }
+    } else if (children.key!== null) {
+      const candidate = keyedOld.get(children.key)
+      if (candidate && candidate.type === children.type) {
+        match = candidate
+        keyedOld.delete(children.key)
+      }
+    } else {
+      const candidate = oldFibers[index]
+      if (candidate && candidate.key === null && candidate.type === children.type) {
+        match = candidate
+      }
+    }
+    if (match) {
+      used.add(match)
+    }
+    const fiber = createFiber(children, parent, match)
+    if (previous) {
+      previous.sibling = fiber
+    } else {
+      (parent.child = fiber)
+    }
+    previous = fiber
+  })
+
+  for (const fiber of oldFibers) {
+    if (!used.has(fiber)) {
+      deletions.push(fiber)
+    }
+  }
+
+
+
+
+
+}
+function reconcileChildren(
+  parent: MiniFiber,
+  children: MiniChild[],
+  oldChild: MiniFiber | null,
+): void {
+  const nextChildren = flattenChildren(children)
+  const oldFibers: MiniFiber[] = []
+
   let oldFiber = oldChild
 
   while (oldFiber) {
-    deletions.push(oldFiber)
+    oldFibers.push(oldFiber)
     oldFiber = oldFiber.sibling
   }
 
+  const keyedOld = new Map<Key, MiniFiber>()
+
+  for (const fiber of oldFibers) {
+    if (fiber.key !== null) {
+      keyedOld.set(fiber.key, fiber)
+    }
+  }
+
+  const used = new Set<MiniFiber>()
   let previous: MiniFiber | null = null
 
-  for (const child of flattenChildren(children)) {
-    const fiber = createFiber(child, parent, null)
+  nextChildren.forEach((child, index) => {
+    let match: MiniFiber | null = null
+
+    if (typeof child === 'string' || typeof child === 'number') {
+      const candidate = oldFibers[index]
+
+      if (candidate && candidate.key === null && candidate.type === null) {
+        match = candidate
+      }
+    } else if (child.key !== null) {
+      const candidate = keyedOld.get(child.key)
+
+      if (candidate && candidate.type === child.type) {
+        match = candidate
+        keyedOld.delete(child.key)
+      }
+    } else {
+      const candidate = oldFibers[index]
+
+      if (
+        candidate &&
+        candidate.key === null &&
+        candidate.type === child.type
+      ) {
+        match = candidate
+      }
+    }
+
+    if (match) {
+      used.add(match)
+    }
+
+    const fiber = createFiber(child, parent, match)
 
     if (previous) {
       previous.sibling = fiber
@@ -311,6 +444,12 @@ function reconcileChildren(
       parent.child = fiber
     }
     previous = fiber
+  })
+
+  for (const fiber of oldFibers) {
+    if (!used.has(fiber)) {
+      deletions.push(fiber)
+    }
   }
 }
 
@@ -583,4 +722,5 @@ export function render(element: MiniNode, container: Element): void {
     root.pending = false
     render(root.element, root.container)
   }
+
 }

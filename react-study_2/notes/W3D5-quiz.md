@@ -24,6 +24,9 @@ function handleClick() {
 3. 为什么第三个调用没有在第二个调用的结果上继续加一？
 
 **你的答案：**
+1： value 0 pending state 1 -》 pendingstate 1 值 2 -〉 value 0  pending state 1 -》 pending 1 value 2
+2: 最终显示2
+3: 第三个调用的时候 使用的 state的值 0，没有pending state，第二次是 函数式会把pending state给到下一个 函数式的调用。
 
 ## 复习 2：key 与 state 重置（0.5 分｜来自 W1D5 第 2 题）
 
@@ -38,6 +41,7 @@ function Messenger({ recipient }: { recipient: Contact }) {
 从 Ada 切换到 Grace 时，草稿为什么会保留？如何让每位收件人在切换后拿到空白草稿（不继承上一位的草稿）？为什么不建议写成 `key={Math.random()}`？
 
 **你的答案：**
+1:  切换后，组件chat的实例因为type，key 都没有没有变，所以使用的还是上一个实例的草稿
 
 ## 第 1 题：createElement、工作循环与双缓冲（2.5 分）
 
@@ -76,12 +80,16 @@ function App() {
 }
 ```
 
-1. 这段 JSX 编译后会调用什么？（说出经典 runtime 和自动 runtime 各一种形式即可。）
+1. 这段 JSX 编译后会调用什么？（说出经典 runtime 和自动。）
 2. 按上面的 `createElement`，写出 `App()` 返回的 `div` 元素对象的简化形状（保留 `type`、`props.id`、`children`；文本用 `TEXT_ELEMENT` 表示）。
-3. `App` 这个组件函数本身会出现在元素的哪个字段里？元素对象是 DOM 节点或 Fiber 吗？
+3. `App` 这个组件函数本身会出现在元素的哪个字段里？元素对象是 DOM 节点或 Fiber 吗？ runtime 各一种形式即可
 4. 真实 React 元素通常还带 `key`、`ref`、`$$typeof` 等字段；它们与 `props` 是什么关系？mini 版为什么可以省略？
 
 **你的答案：**
+1:  生成 `<div><h1>hello</h1><p>0</p></div>`
+2: props.type ='div', id ='', children = [<h1>,<p>]
+3: <body>里，
+
 
 ### B. 工作循环与双缓冲（1.5 分）
 

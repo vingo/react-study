@@ -17,7 +17,7 @@
 // isPending 会覆盖整个异步流程；但 await 之后的 state 更新按当前文档
 // 还要再包一层 startTransition，才能继续作为 transition 更新。
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 export type TabId = 'overview' | 'activity'
 
@@ -85,15 +85,22 @@ export default function TransitionTabs() {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
   const [content, setContent] = useState<TabData>(TAB_DATA.overview)
   const [filter, setFilter] = useState('')
+  const [isPending, startTransition] = useTransition()
+
 
   function selectTab(next: TabId) {
     if (next === activeTab) {
       return
     }
-
     // BUG：直接 setState，高亮立即切换；没有 pending 反馈。
-    setActiveTab(next)
-    void loadTabData(next).then(setContent)
+    startTransition(async() => {
+      const data= await loadTabData(next)
+      startTransition(()=> {
+        setActiveTab(next)
+        setContent(data)
+      })
+      
+    })
   }
 
   return (
@@ -120,7 +127,7 @@ export default function TransitionTabs() {
           onChange={(event) => setFilter(event.target.value)}
         />
       </label>
-
+      {isPending && <p role="status">切换中…</p>}
       <article
         aria-label="标签页内容"
         data-tab={content.tab}

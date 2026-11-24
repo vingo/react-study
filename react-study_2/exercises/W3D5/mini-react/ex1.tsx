@@ -53,8 +53,20 @@ export type ElementProps = Record<string, unknown> & {
 }
 
 function normalizeChildren(children: MiniChild[]): MiniChild[] {
+  if (!children.length) return []
   // TODO：递归展平数组，丢弃 boolean / null / undefined。
-  return children
+  const results =  children.length ? children: [children]
+  const data:MiniChild[] = []
+  for(let item of results) {
+    if (item === null || item === undefined ||  typeof item === 'boolean') continue;
+    if( Array.isArray(item)) {
+      data.push(...normalizeChildren(item))
+    } else {
+      data.push(item)
+    }
+  }
+  
+  return data
 }
 
 export function createElement(
@@ -65,9 +77,13 @@ export function createElement(
   // TODO：按文件开头的规则实现。
   // 当前实现把 key 留在 props 里，也没有展平 / 过滤 children，
   // 所以元素形状、key、children 相关断言都会失败。
+  const config = props
+  const { key, ...rest } = props ?? {}
+  let items = children.length ? children : (props?.children ? [props.children]: [])
+  let nodes = normalizeChildren(items)
   return {
     type,
-    key: null,
-    props: { ...(props ?? {}), children },
+    key: key ?? null,
+    props: { ...(rest), children: nodes },
   }
 }

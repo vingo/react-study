@@ -43,7 +43,10 @@ function App() {
 分别解释 React 判断“是否复用同一个组件实例”的依据。
 
 **你的答案：**
-
+1: 会保留，都是<Editor />组件，key， type都一致
+2: 不会
+3: 会保留
+组件实例是否一致： 比较 key，type。
 
 ## 复习 2：reducer 找 bug（0.5 分｜来自 W1D5 第 3 题）
 
@@ -77,7 +80,17 @@ function tasksReducer(tasks: Task[], action: Action): Task[] {
 1. 找出 reducer 中至少两处问题，并说明各自会导致什么问题。
 2. 写出 `toggled` 分支的正确实现；`added` 的 `id` 应该在哪里生成？
 
+     
 **你的答案：**
+1: toggled类型场景： 需要返回新的task对象,代码中返回同一个引用可能跳过更新
+2: added类型： id不能放在reduce函数中，只能是纯函数， id可以放在时间函数中生成
+更新代码：
+ case 'toggled': {
+    return tasks.map(t => t.id === action.id ? { t.done !t.done} : t)
+  }
+  case 'added':{
+      return [...tasks, { id: action.id, text: action.text, done: false }]
+  }
 
 
 ## 第 1 题：主题切换、Profiler 与 memo（3 分）
@@ -125,6 +138,21 @@ function Dashboard() {
 3. 团队打算给这个页面里所有对象和函数都套 `useMemo` / `useCallback`。请给出你认为合理的优化顺序，说明每一步做什么、为什么；最后说明 `memo` 真正有价值的条件。
 
 **你的答案：**
+1: `phase`： 这次提交属于 mount（首次挂载），update， nested-update;
+`actualDuration`: 本次更新中，渲染 profiler以及其后代实际化掉的毫秒数；
+`baseDuration`：  没有做任何优化，整个组件重新渲染需要的估算时间；memoization优化前的时间（最坏的情况）
+2；会渲染chart组件， options属性值每次都是新的引用，所以memo包裹的chart每次props都不同，会重新渲染；
+修改： options常量化， onSelect 用useCallback包裹
+const CHART_OPTIONS = {animate: true};
+const handleSelect = useCallback((id: string) => {
+  console.log('picked', id)
+}, []);
+<Chart data={data} options={CHART_OPTIONS} onSelect={handleSelect} />
+3: 顺序：先测量、再结构、后 memo, 
+3.1 测量：  用devtools profiler 确认再次提交是否满，具体的commit是啥，
+3.2: 结构优化： 减少需要render的工作，状态下沉，用children组合避免父组件state变化波及子树，移除非必要的effect和派生state
+3.3: memo化：
+3.4: 并发：如果输入/交互被慢渲染阻塞，可以考虑 useDeferredValue/useTrasition
 
 
 ## 第 2 题：useMemo / useCallback 的语义与误用（2.5 分）
@@ -145,6 +173,16 @@ function Report({ rows, status }: { rows: Row[]; status: string }) {
 用户把 `status` 从 `open` 切到 `done` 后，`List` 会显示哪一批数据？这个 `useMemo` 至少有两个问题。指出并修复（写出修正后的依赖数组，以及 `analytics` 应该放在哪里）。
 
 **你的答案：**
+1: 返回open类型的数据
+2: 问题1: 依赖缺少status
+useMemo(()=>{}, [rows,sttaus])
+问题2: usememo 发生在render阶段，会多次触发，可能被重做/丢弃，不保证只执行一次，analytics.track 就不准确了
+
+useEffect(() => {
+    analytics.track('report-render', { status })
+  }, [status])
+
+
 
 
 ### B. 列表项的回调
@@ -174,6 +212,12 @@ function List({ items, onSelect }) {
 `handlePick` 已经用 `useCallback` 缓存了，为什么每次 `List` 渲染时 `Row` 仍可能全部重渲染？在不改变 `Row` 的 props 契约（仍然接收 `item` 和 `onPick`）的前提下，怎样改才能让 `memo` 生效？如果启用 React Compiler，这段源码还会不会出现同样的问题？
 
 **你的答案：**
+1: onpick的值不对
+<Row key={item.id}  item={item} onPick={handlePick}  />
+const Row = memo(funtion Row({item, onPick}){
+  return <button onClick= {() => onPick(item.id)}>
+  {item.name} </button>
+});
 
 
 ### C. 哪些 memo 化值得
@@ -192,7 +236,9 @@ const sorted = useMemo(() => [...items].sort(compare), [items])
 ```
 
 **你的答案：**
-
+c1 不值得
+c2 不需要
+c3: 值得,需要先看下profiler，
 
 ## 第 3 题：React Compiler 1.0 的心智模型（2.5 分）
 
@@ -229,3 +275,5 @@ function formatPrice(value: number) {
 3. 团队说：“Compiler 1.0 已经自动 memo 了，可以把现有 `useMemo` / `useCallback` / `memo` 全删掉，并且以后写代码可以依赖 memo 来保证正确性。” 这个说法哪里不对？至少从三个方面反驳。
 
 **你的答案：**
+1: cart和prieTag会被自动memo化，
+2: 在render内执行的`item.seen = true`，直接修改props对象，违反了 纯函数的规则。编译器的策略是： 遇到可能违反规则的代码时，会跳过优化baiout

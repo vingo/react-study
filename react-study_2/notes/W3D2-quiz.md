@@ -25,6 +25,9 @@ function Feed({ items }: { items: string[] }) {
 2. 写出正确写法，并说明原写法违反了什么规则、为什么在并发渲染下更危险。
 
 **你的答案：**
+1: 严格模式下： 父组件多执行一次 reverse执行了2次，等于没有执行/
+2: const newestFirst = [...items].reverse() ，render必须时纯函数，不能修改props，state，render之前存在的对象。
+并发渲染下： 因为render会多次执行，被中断后重试，在后台渲染，或被activity预渲染；页面UI的结果取决于render执行了几次，哪一次被提交，而不是取决于当前的props/state
 
 
 ## 复习 2：组件身份与草稿保留（0.5 分｜来自 W1D5 第 2 题）
@@ -41,6 +44,8 @@ function Messenger({ recipient }: { recipient: Contact }) {
 2. 为什么不能写 `key={Math.random()}`？至少说出两个具体后果。
 
 **你的答案：**
+1: 因为 chat组件 没有设置用户纬度的key，切换用户名后，chat没有重新渲染
+2: key些为随机数，就是每次rende的时候都要重新创建chat组件。
 
 
 ## 第 1 题：transition 与搜索页（3 分）
@@ -95,6 +100,10 @@ function SearchPage() {
 4. 假设另有一个不在输入框上的按钮，把 `query` 从 `a` 切到 `b`，并且这个更新被包在 `startTransition` 中。结果区写成 `<Suspense key={query} fallback={<Spinner />}><ResultsByQuery query={query} /></Suspense>`，其中 `ResultsByQuery` 用 `use()` 读取按 query 缓存的、可能挂起的 promise。key 加与不加，用户分别会看到什么？为什么？
 
 **你的答案：**
+1: 不能可靠的显示 abc，useTransition内的
+2:  输入框更新后； serResults完成后状态为false
+3: 是非紧急， 可能显示的内容会不一致；可以用`useDeferredValue`来记录上次的值，更新完成后，加载最新的results
+4: 
 
 
 ## 第 2 题：useDeferredValue 与慢列表（2.5 分）
@@ -124,6 +133,18 @@ function SlowList({ text }: { text: string }) {
 3. 把 `SlowList` 放进 `<Suspense fallback={<Spinner />}>`。后台 render 因新值挂起时，用户会看到 Spinner 还是旧列表？为什么？`useDeferredValue` 会减少网络请求次数吗？它和 debounce/throttle 的核心区别是什么？在哪些情况下不适合用它？
 
 **你的答案：**
+1: text = a, deferredText=b, slowList 的到的是可能是a/b，在这个期间 比如 初始值 text = ‘’，deferredText=‘’， 用户输入a， react先做一次紧急render 此时： `text=a`,`deferredText=''`.输入框是a；showList收到的是‘’；这次紧急render后，react立即后台用 `deferredText='a'`再次渲染.中间可能中断/丢弃，如果完成并提交，列表更新为a，此时 `text = deferredText`; 如果用户在在渲染完成前输入了b，react会紧急更新text=b,deferredText还是上次的旧值（可能是‘’，也可能是a，取决于后台是否提交成功）。 react会放弃/中断 正在运行的a的后台渲染，用最新的b来重新开始后台渲染，中间态 a可能不会显示，最终显示 b；`text !== deferredText` 说明当前list结果落后于用户输入；
+2: 不能，当前的slowList是普通组件，紧急render时，`App`重新渲染，slowList收到旧的deferredText 的值，因为没有`memo`，仍然会重新再次渲染，2000多条计算时同步发生，输入依旧会卡，之后后台render还会再次用新值做一次昂贵计算；
+正确的做法是： 用memo `
+const SlowList = memo(function SlowList({ text }: { text: string }) {
+  // ...
+})`；
+直接在slowList读取text，它就会在紧急render中总是获取最新的值，每次都重新渲染，
+如果读取的是 `useDeferredValue({ q: text })`， 每次render时都创建一个新的q对象, `object.is`比较后认为不同，会不断的卸载旧的，创建新的ul进行后台渲染；
+3: 是旧列表，只有在紧急更新或者新挂载的边界才可能立即显示fallback；
+不会减少网络请求次数；
+和debounce/throttle 对比： debounce等待用户停止输入一段固定时间；throttle限制固定时间内的执行次数。两者都是时间驱动的；
+
 
 
 ## 第 3 题：Activity 与标签页（2.5 分）
@@ -182,3 +203,14 @@ function Video() {
 4. 如果 hidden 的 Activity 子树只返回字符串 `Hello`，DOM 里会有什么？为什么？隐藏期间子组件还会不会因为父组件传入新 props 而重新渲染？优先级如何？
 
 **你的答案：**
+1: 会渲染video，dom存在，home的effect会执行，video的不会； fetchVideo会执行请求；`useEffect` 时不会执行内部的逻辑；
+切换到video后，state保留，effectc重新执行，dom直接显示；
+2： 显示hello；draft的state&textarea的dom都会保留， 顺序： 初始home时subscribe-》切到video时，home 卸载unsubscribe -》切回home时，挂载home subscribe，；
+dom节点不会被销毁重建；只是隐藏和显示；输入框的dom状态（state，dom的临时状态）都保留 
+3:会播放，因为video组件只隐藏了，不是销毁； 
+修复： 使用ref的到video元素，用useLayoutEffect的cleanup函数暂停播放，
+`const ref= useRef<HTMLVideoElement>(null); useLayoutEffect(() =>{ const video= ref.current; return () => { video?.pause();}},[]); return <video ref={ref} src='/a.mp4' autoplay loop controls>`
+ activity隐藏时，effect会被清理，cleanup函数执行，订阅/定时器等副作用会停止；
+ 组件隐藏时：会有副作用比如定时器/监听器/订阅等会一直保留，再次显示时，setup执行，重生重复的订阅/定时器/监听器；
+4: 纯文本场景下 activity子树不显示 hello，因为activity是通过给dom元素设置`display=none`来隐藏状态，纯文本没有dom元素，所以不显示； 
+隐藏时，子组件会因父组件的props更新而渲染，但是优先级低于可见内容，effect不会挂载； state，dom都会保留。

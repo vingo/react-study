@@ -60,8 +60,8 @@
 | W3D1 | Fiber 与协调（**重点**） | Fiber 结构、diff 规则、key 的作用、双缓冲 |
 | W3D2 | 并发渲染 | Lane 优先级、useTransition、useDeferredValue、`<Activity>` |
 | W3D3 | 性能与 Compiler | Profiler 读图、memo 何时有用、React Compiler 1.0 做了什么 |
-| W3D4 | 测试 | Vitest 5 + Testing Library、按用户行为测试、MSW 模拟接口 |
-| W3D5 | 手写 mini-react | createElement、render、Fiber 工作循环、useState（放在 `mini-react/`） |
+| W3D4 | 测试（**跳过**） | Vitest 5 + Testing Library、按用户行为测试、MSW 模拟接口 |
+| W3D5 | 手写 mini-react（**重点中的重点**） | createElement、render、Fiber 工作循环、useState（放在 `mini-react/`） |
 
 ### 第 4 周：全栈 React（Next.js 16）
 | ID | 主题 | 要点 |

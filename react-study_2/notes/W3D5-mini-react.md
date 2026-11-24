@@ -1,5 +1,7 @@
 # W3D5：手写 mini-react
 
+> **备注：重点中的重点**
+>
 > 以 React 19.3 的公开语义为准。mini-react 是教学实现，不是 React 源码的复制；`current`、`alternate`、`memoizedState` 等字段借用 React 的内部概念，但实现刻意简化，不能用于生产。文中代码来自同一个 `mini-react/index.js` 骨架，按 3.1–3.6 组合即可运行；单独摘录时依赖同节定义的同名函数。
 
 ## 1. 一句话结论

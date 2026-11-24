@@ -23,7 +23,7 @@
 // 测试依赖：MetricBoard 内部的 <Profiler> 计数与模块级 render 计数。
 // 请保留 Profiler。不要修改测试断言。
 
-import { Profiler, memo, useState } from 'react'
+import { Profiler, memo, useCallback, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
 export type TeamId = 'alpha' | 'beta'
@@ -115,7 +115,7 @@ type MetricBoardProps = {
   metrics: Metric[]
   options: { compact: boolean }
   onInspect: (label: string) => void
-  children: ReactNode
+  children?: ReactNode
 }
 
 const MetricBoard = memo(function MetricBoard({
@@ -123,7 +123,6 @@ const MetricBoard = memo(function MetricBoard({
   metrics,
   options,
   onInspect,
-  children,
 }: MetricBoardProps) {
   boardRenders += 1
   boardRenderLog.push({ team, metricCount: metrics.length })
@@ -147,7 +146,6 @@ const MetricBoard = memo(function MetricBoard({
             </li>
           ))}
         </ul>
-        {children}
       </section>
     </Profiler>
   )
@@ -164,8 +162,15 @@ export default function WorkspacePanel({ theme = 'light' }: WorkspacePanelProps)
   const [inspected, setInspected] = useState<string | null>(null)
 
   // BUG：以下引用每次 render 都会重新创建，memo 形同虚设。
-  const metrics = buildMetrics(team)
-  const options = { compact: false }
+  const metrics = useMemo(() =>{
+    return buildMetrics(team)
+  },[team])
+  const options = useMemo(() =>{
+    return { compact: false }
+  },[])
+  const handleInspect = useCallback((label: string)=> {
+    setInspected(label)
+  }, [inspected])
 
   return (
     <section aria-label="工作台" data-theme={theme}>
@@ -200,11 +205,9 @@ export default function WorkspacePanel({ theme = 'light' }: WorkspacePanelProps)
         team={team}
         metrics={metrics}
         options={options}
-        onInspect={(label) => setInspected(label)}
-      >
-        <small>数据来源：本地缓存</small>
-      </MetricBoard>
-
+        onInspect={handleInspect}
+      />
+      <small>数据来源：本地缓存</small>
       <p>已查看：{inspected ?? '无'}</p>
     </section>
   )

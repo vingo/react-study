@@ -19,7 +19,7 @@
 // - getTableRenderCount()：StockTable 的 render 次数。
 // 测试只数调用次数，不依赖真实耗时。不要修改测试断言。
 
-import { useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 
 export type StockItem = {
   id: string
@@ -102,7 +102,7 @@ type StockTableProps = {
   onSelect: (id: string) => void
 }
 
-function StockTable({ rows, selectedId, onSelect }: StockTableProps) {
+const StockTable = memo(function StockTable({ rows, selectedId, onSelect }: StockTableProps) {
   tableRenders += 1
 
   return (
@@ -126,7 +126,7 @@ function StockTable({ rows, selectedId, onSelect }: StockTableProps) {
       </tbody>
     </table>
   )
-}
+})
 
 export default function InventoryDashboard() {
   const [items, setItems] = useState<StockItem[]>(INITIAL_STOCK)
@@ -136,8 +136,10 @@ export default function InventoryDashboard() {
   const [helpOpen, setHelpOpen] = useState(false)
 
   // BUG：每次 render 都重新聚合、重新过滤。
-  const stats = computeInventoryStats(items, threshold)
-  const rows = filterStock(items, search)
+  const stats = useMemo(()=> {
+    return computeInventoryStats(items, threshold)
+  }, [items, threshold]) 
+  const rows = useMemo(()=> { return filterStock(items, search) },[items, search])
 
   function addItem() {
     setItems((current) => [
@@ -150,6 +152,10 @@ export default function InventoryDashboard() {
       },
     ])
   }
+
+  const onSelect = useCallback((id: string) => {
+      setSelectedId(id)
+  },[])
 
   return (
     <section aria-label="库存看板">
@@ -193,7 +199,7 @@ export default function InventoryDashboard() {
       <StockTable
         rows={rows}
         selectedId={selectedId}
-        onSelect={(id) => setSelectedId(id)}
+        onSelect={onSelect}
       />
 
       <button type="button" onClick={addItem}>
