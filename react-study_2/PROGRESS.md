@@ -5,7 +5,7 @@
 |---|---|---|---|
 | v1 任务看板 | 已完成 | 2026-11-16 | `apps/kanban`：Vite 8 + React 19 + TypeScript 7；useState / useEffect / useRef；localStorage 持久化与损坏数据降级；Vitest + Testing Library 18 个测试通过 |
 
-下一步：完成 W3D5 手写 mini-react（材料已就绪，**重点中的重点**）；W2D1/W2D3/W2D5 与 W3D2/W3D3 的测验/练习待补；W3D4 已跳过。之后进入 v2（MSW + TanStack Query + React Router + Zustand）。
+下一步：学习 W4D1–W4D5（材料已生成）；W3D5 测验未完成；W2D1/W2D3/W2D5 与 W3D2/W3D3 的测验/练习待补；W3D4 已跳过。之后进入 v2（MSW + TanStack Query + React Router + Zustand）。
 
 ## 进行中
 - **W2D1 Actions 与表单（重点）**：讲义、练习、测验已生成；练习待验收，测验待作答。
@@ -16,6 +16,13 @@
 - **W3D2 并发渲染**（2026-11-18）：讲义、练习、测验已生成；练习起始 5 失败 / 1 通过，参考答案 6/6 通过。2026-11-20 练习验收：6/6 通过，类型检查通过，无 act 警告；ex2 的嵌套 `startTransition`、ex3 的 `<Activity>` 用法正确。ex1 有一处语义瑕疵：`data-list-query` 应使用 `deferredQuery`，当前用了 `query`（测试未覆盖过渡期间的 DOM）。2026-11-20 判卷 5.5/9（需要复习，第 1 题薄弱）。
 - **W3D3 性能与 React Compiler**（2026-11-18）：讲义、练习、测验已生成；练习起始 9 失败 / 8 通过，参考答案 17/17 通过，类型检查通过。2026-11-20 判卷 4.35/9（需要重练：第 1 题缺 Profiler 判断与结构优化，第 3 题大半未答）；练习待验收。
 - **W3D5 手写 mini-react（重点中的重点）**（2026-11-18）：讲义、练习、测验已生成；练习起始 18 失败 / 1 通过，参考答案 19/19 通过。2026-11-24 练习验收：19/19 通过，类型检查通过，无 act 警告；keyed diff、hook 链表与 dispatch 实现正确。待清理：ex2/ex3 未使用的 React / @testing-library 导入（违反“源码不 import React”验收项）、ex3 死代码 `reconcileChildren222`；ex1 的 `props.children` 为 `0`/`''` 时会丢失子节点。2026-11-24 判卷（未完成）：已答部分约 0.8/9；第 1 题 B、第 2 题、第 3 题空白，暂不作为最终成绩；完成后再判。
+
+### 第 4 周材料（已生成，待学习/验收）
+- **W4D1 Server Components**（2026-11-24）：讲义 364 行、9 分测验与答案；练习 10 用例，起始 7 失败 / 3 通过，参考答案 10/10，类型检查通过。练习为纯 TS 语义模型，未安装 Next.js。2026-11-28 判卷 6.25/9（需要复习）：第 1 题 2.5/3、第 2 题 1.9/2.5、第 3 题 1.4/2.5；Suspense key 仍说反，memo 漏 children，提出“移除 server-only”作为修复，user/onLogout/apiKey 的序列化判断仍错。
+- **W4D2 App Router**（2026-11-24）：讲义 496 行、9 分测验与答案；练习 10 用例，起始 8 失败 / 2 通过，参考答案 10/10，类型检查通过。覆盖文件约定、边界选择、fetch/Cache Components 缓存模型；练习为纯 TS 模型。
+- **W4D3 Server Actions**（2026-11-24）：讲义 500 行、9 分测验与答案；练习 10 用例，起始 7 失败 / 3 通过，参考答案 10/10，类型检查通过。覆盖校验、鉴权/归属、revalidate/redirect 与 RSC 安全公告；练习为纯 TS 模型。
+- **W4D4 React 19.3**（2026-11-24）：讲义 432 行、9 分测验与答案；练习 10 用例，起始 8 失败 / 2 通过，参考答案 10/10，类型检查通过。使用本机 React 19.3.1 的 ViewTransition、Fragment ref、真实 hydration 测试。
+- **W4D5 综合复盘**（2026-11-24）：讲义 503 行（知识图谱、50 问、Kanban 白板、决策表）、9 分测验与答案；练习 12 用例，起始 10 失败 / 2 通过，参考答案 12/12，类型检查通过。含架构规划、Server Action 安全流水线、useOptimistic 乐观 UI capstone。
 
 ## 已跳过
 - **W3D4 测试**（2026-11-23 决定跳过）：测试相关主题，不作为本轮学习重点。已生成的讲义、练习、测验保留供查阅：`notes/W3D4-testing.md`、`exercises/W3D4/`、`notes/W3D4-quiz.md`。
@@ -33,6 +40,7 @@
 | W3D1 Fiber 与协调 | 7.5 / 9（83%） | 基本掌握（代码 15/15） | 2026-11-19 |
 | W3D2 并发渲染 | 5.5 / 9（61%） | 需要复习（第 1 题薄弱；代码 6/6） | 2026-11-20 |
 | W3D3 性能与 Compiler | 4.35 / 9（48%） | 需要重练（第 3 题未答完） | 2026-11-20 |
+| W4D1 Server Components | 6.25 / 9（69%） | 需要复习（Suspense key、序列化；练习 10/10） | 2026-11-28 |
 
 ## 薄弱点
 - render 与 commit 的时序：首次 render 时 DOM 尚不存在；更新 render 读取到的是上一次 commit 的 DOM。
@@ -87,6 +95,13 @@
 - mini-react 元素形状：`type` 在元素顶层，不是 `props.type`；`props.id` 应为 `'app'`；文本要包成 `TEXT_ELEMENT`，`nodeValue` 保留数字。
 - JSX 编译：经典 runtime 调 `React.createElement`，自动 runtime 调 `jsx` / `jsxs`；组件函数出现在元素的 `type` 字段，元素对象既不是 DOM 也不是 Fiber。
 - key 重置：`<Chat key={recipient.id} />` 可让每位收件人拿到空白草稿；随机 key 每次 render 都重建，草稿、焦点、DOM 与 Effects 全部丢失。
+- `'use client'` 是客户端模块图入口，不是“只在客户端执行”；Client Component 也会在服务端预渲染 HTML，Tooltip 等传递依赖会一起进入客户端 bundle。
+- Suspense 的 key：`key` 放在 `<Suspense>` 上会改变边界身份，挂起时显示 fallback；不加 key 时同一边界在 transition 中保留旧内容。用户当前将两者说反了。
+- memo 的 children：`children` 也是 prop，父组件每次 render 新建 `<ExpensiveTable />` 元素会击穿 `memo`；稳定 props 之外还要用状态下沉/组合从源头减少渲染。
+- RSC 跨边界 props：类实例和普通函数不可序列化；Date、Set 可序列化；`apiKey` 字符串可序列化但绝不能传给客户端。序列化能力不等于安全。
+- `user` / `onLogout` / `apiKey` 的序列化判断：`user` 是类实例，需先转普通 DTO；`onLogout` 是普通异步函数，不能跨边界；`apiKey` 不是“加密信息”，而是可序列化但绝不可外传的明文秘密。
+- 移除 `server-only` 不是修复：Client 模块图仍会把服务端代码/依赖拉进浏览器；正确方向是 Server Component 作为 owner，把 Server UI 作为 `children` 传入 Client Shell。
+- owner 与 parent：Server Component 作为 owner 把 Server UI 作为 `children` 传给 Client Shell；Client Shell 的 state 变化不会重新执行 Server child，更新需要新的服务端渲染/payload。
 
 ## 复习队列
 | 题目来源 | 概念 | 下次复习日期 | 连续答对次数 |
@@ -133,3 +148,8 @@
 | W3D5 第 1 题 | createElement 元素形状、工作循环、双缓冲 | 2026-11-25 | 0 |
 | W3D5 第 2 题 | keyed diff、lastPlacedIndex、index key | 2026-11-25 | 0 |
 | W3D5 第 3 题 | Hook 链表顺序、更新队列、render 纯度 | 2026-11-26 | 0 |
+| W4D1 复习 1 | transition、受控输入、Suspense key | 2026-11-29 | 0 |
+| W4D1 复习 2 | memo 的 children prop、状态下沉 | 2026-11-29 | 0 |
+| W4D1 第 1 题 | RSC/SSR、模块图、跨边界序列化 | 2026-12-01 | 0 |
+| W4D1 第 2 题 | Server/Client children 组合、owner/parent | 2026-11-29 | 0 |
+| W4D1 第 3 题 | 序列化与安全、三条 RSC 误区 | 2026-11-29 | 0 |
